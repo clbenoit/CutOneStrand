@@ -12,6 +12,7 @@ parser.add_argument('--vcf', nargs='?', help='candidates in vcf format')
 parser.add_argument('--mutlist', nargs='?', help='List of interesting mutations according to selected PAM')
 parser.add_argument('--candidatesfasta', nargs='?', help='fasta files containing genimic cintext for intesrting sites')
 parser.add_argument('--cas', nargs='?', help='cas9 to scan sites for')
+parser.add_argument('--gene', nargs='?', help='gene')
 args = parser.parse_args()
 
 pam_dict = {}
@@ -105,11 +106,10 @@ results_table['mutation_position'] = results_table['mutation_position'].astype('
 results_table['ALT'] = results_table['ALT'].astype('string')
 
 
-results_table.to_csv(os.path.dirname(args.candidatesfasta) + "resultstableraw.tsv", sep ='\t', index = False)
-#results_table.to_csv("/data/home/cbenoit3/crispr_project/SNPS/hg38/resultstableraw.tsv", sep ='\t', index = False)
+results_table.to_csv(os.path.dirname(args.candidatesfasta) + "/" +"resultstableraw.tsv", sep ='\t', index = False)
 
-vcf = vcf.Reader(open(os.path.dirname(args.candidatesfasta) + 'RYR1_SNPS_CANDIDATES_hg38.vcf', 'r'))
-#vcf = vcf.Reader(open('/data/home/cbenoit3/crispr_project/SNPS/hg38/RYR1_SNPS_CANDIDATES_hg38.vcf', 'r'))
+name = os.path.basename(args.fasta).replace("_SNPS_CANDIDATES_hg38_WTH_FLANKING_SEQUENCES.fasta", "")
+vcf = vcf.Reader(open(os.path.dirname(args.candidatesfasta) + '/' + name + '_SNPS_CANDIDATES_hg38.vcf', 'r'))
 candidates_vcf = pd.DataFrame(columns = ["mutation_position","mutation_ID","AF"])
 for record in vcf:
 	#record = {"mutation_position" : record.POS, "mutation_ID" : record.ID + "_" + record.REF + "/" + record.ALT, "AF" : record.INFO["AF"]}
