@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 ## environment variables
-CONDAPATH=/home/ptngs/miniconda3/
-
+#CONDAPATH=/home/ptngs/miniconda3/
+CONDAPATH=/data/home/cbenoit3/miniconda3/
 show_help() {
     echo -e ""
     echo -e "############################### HELP ####################################################\n"
@@ -175,6 +175,8 @@ CHR=$(grep ${GENE} ${WDIR}/annotations/hg38/chr_ens_names_matches.csv | cut -f1 
 
 mkdir -p ${WDIR}/sequences/hg38
 cd ${WDIR}/sequences/hg38
+source ${CONDAPATH}/etc/profile.d/conda.sh
+conda activate preprocessdata
 
 # download fasta genome
 if [ ! -f ${WDIR}/sequences/hg38/${CHR}.fa ];then
@@ -215,8 +217,8 @@ echo -e "SUCCESS\n"
 
 echo -e "####### Computing analysis... #######"
 ##################" Keep variants with AF between 0.3 and 0.8 and with the FILTER field annotated as PASS ##################
-source ${CONDAPATH}/etc/profile.d/conda.sh
-conda activate preprocessdata
+#source ${CONDAPATH}/etc/profile.d/conda.sh
+#conda activate preprocessdata
 
 FREQ_BCF=$(jq -n ${FREQ}/100 | grep -o "^....")
 if [ ! -f ${WDIR}/SNPS/hg38/gnomad.genomes.v3.1.2.sites.${CHR}_filtered.vcf.bgz ];then

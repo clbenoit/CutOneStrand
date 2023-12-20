@@ -25,7 +25,7 @@ documentation](https://docs.conda.io/en/latest/miniconda.html).
 Then clone this repository
 
 ```bash
-    git clone git@git-bioinfo:CBenoit3/cutonestrand.git
+    git clone git@github.com:clbenoit/CutOneStrand.git
 ```
 
 ## 2.3 Setup configuration
