@@ -9,9 +9,9 @@ show_help() {
     echo -e "                 CutOneStrand version = 1.0.0                        \n"
     echo "Usage: $0 [args...]" >&2
     echo -e "Available arguments : \n"
-    echo "   -g, --gene           gene to scan for positions to cut on one strand only, ex : RYR1"
-    echo "   -c, --cas            cas9 you want to use to cut your gene (Only spcas9 available on v1.0)" 
-    echo "   -f, --frequence      Minimal variant frequency in gnomAD v.3 population"
+    echo "   -g, --gene,           gene to scan for positions to cut on one strand only, ex : RYR1"
+    echo "   -c, --cas,            cas9 you want to use to cut your gene (Only spcas9 available on v1.0)" 
+    echo "   -f, --frequence,      Minimal variant frequency in gnomAD v.3 population"
     echo "   -o, --output,        Output file name to store results in"
     echo "   -h, --help,          Show this help section"
     echo ""
@@ -135,7 +135,7 @@ then
 else
   echo -e "Installing python dependencies for data preprocessing steps..."
   conda env create --name preprocessdata -f ${WDIR}/environments/preprocessdata.yml
-  echo "SUCCESS"
+  echo "DONE"
 fi
 
 if { conda env list | grep 'java'; } >/dev/null 2>&1
@@ -144,16 +144,16 @@ then
 else
   echo -e "Installing java dependencies for data preprocessing steps..."
   conda env create --name java -f ${WDIR}/environments/java.yml
-  echo "OK"
+  echo "DONE"
 fi
 
 if { conda env list | grep 'pyvcf'; } >/dev/null 2>&1
 then
-	echo "python dependencies available for results formating steps"
+	echo "Python dependencies available for results formating steps"
 else
 	echo "Installing python dependencies for results formating steps ..."
-	conda env create --name pyvcf -f environments/pyvcf.yml
-	echo "OK"
+	conda env create --name pyvcf -f ${WDIR}/environments/pyvcf.yml
+	echo "DONE"
 fi
 
 cd ${WDIR}/tools
@@ -167,7 +167,7 @@ else
 	wget https://github.com/mckennalab/FlashFry/releases/download/1.15/FlashFry-assembly-1.15.jar
 	echo "OK Flashry installed on version : "
 fi
-echo -e "SUCCESS\n"
+echo -e "SUCCESS : Software environments successfully set up. \n"
 
 
 echo -e "####### Checking required annotations... #######"
@@ -197,7 +197,7 @@ if [ ! -f ${WDIR}/annotations/hg38/gtfs/gencode.v43.annotation.gtf ];then
   wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_43/gencode.v43.annotation.gtf.gz
   gunzip ${WDIR}/annotations/hg38/gtfs/gencode.v43.annotation.gtf.gz
 else
-	echo -e "gencode annotation already present on your computing system"
+	echo -e "Gencode annotation already present on your computing system"
 fi
 
 grep ${GENE} ${WDIR}/annotations/hg38/gtfs/gencode.v43.annotation.gtf > ${WDIR}/annotations/hg38/gtfs/${GENE}_gencode.v43.annotation.gtf
@@ -211,14 +211,12 @@ if [ ! -f ${WDIR}/SNPS/hg38/gnomad.genomes.v3.1.2.sites.${CHR}.vcf.bgz ];then
 	cd ${WDIR}/SNPS/hg38/
 	wget https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.${CHR}.vcf.bgz
 else
-	echo -e "gnomAD chromosome file already present on your computing system"
+	echo -e "GnomAD chromosome file already present on your computing system"
 fi
-echo -e "SUCCESS\n"
+echo -e "SUCCESS : Required annotations successfully set up.\n"
 
 echo -e "####### Computing analysis... #######"
 ##################" Keep variants with AF between 0.3 and 0.8 and with the FILTER field annotated as PASS ##################
-#source ${CONDAPATH}/etc/profile.d/conda.sh
-#conda activate preprocessdata
 
 FREQ_BCF=$(jq -n ${FREQ}/100 | grep -o "^....")
 if [ ! -f ${WDIR}/SNPS/hg38/gnomad.genomes.v3.1.2.sites.${CHR}_filtered.vcf.bgz ];then
@@ -231,7 +229,7 @@ if [ ! -f ${WDIR}/SNPS/hg38/${GENE}_${FREQ}_SNPS_CANDIDATES_hg38.vcf ];then
 	echo -e "Intersecting gnomAD positions with freq > ${FREQ}% and ${GENE} annotations..."
 	bcftools view -h ${WDIR}/SNPS/hg38/gnomad.genomes.v3.1.2.sites.${CHR}_filtered.vcf.bgz > ${WDIR}/SNPS/hg38/${GENE}_${FREQ}_SNPS_CANDIDATES_hg38.vcf
 	bedtools intersect -b ${WDIR}/annotations/hg38/gtfs/${GENE}_gencode.v43.annotation.gtf -a ${WDIR}/SNPS/hg38/gnomad.genomes.v3.1.2.sites.${CHR}_filtered.vcf.bgz -wa -u >> ${WDIR}/SNPS/hg38/${GENE}_${FREQ}_SNPS_CANDIDATES_hg38.vcf
-echo "SUCCESS"
+	echo -e "SUCCESS\n"
 fi
 
 ###### Get genomic contest of interesing SNPs #######
@@ -256,7 +254,6 @@ java -jar ${WDIR}/tools/jvarkit/JVARKIT/jvarkit.jar bioalcidaejdk --nocode -F VC
 
 echo -e "\n"
 echo -e "Detecting mutations which create or delete crispr coding sites..."
-echo -e "Activating python environment..."
 source ${CONDAPATH}/etc/profile.d/conda.sh
 conda activate pyvcf
 python3 ${WDIR}/scripts/selectSNPs.py --fasta ${WDIR}/SNPS/hg38/${GENE}_${FREQ}_SNPS_CANDIDATES_hg38_WTH_FLANKING_SEQUENCES.fasta --mutlist ${WDIR}/SNPS/hg38/Mutations_modifying_crispr_cutting_sites.tsv --candidates ${WDIR}/SNPS/hg38/${GENE}_${FREQ}_SNPS_CANDIDATES_hg38.vcf --cas ${CAS} --candidatesfasta ${WDIR}/SNPS/hg38/candidates_sites.fasta
