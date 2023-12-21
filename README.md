@@ -56,9 +56,9 @@ Feel free to address any issue at : benoitclement.sand@gmail.com
 
 This work would have not been possible without :
 
-- FlashFry: a fast and flexible tool for large-scale CRISPR target design: [GitHub](https://github.com/mckennalab/FlashFry)
+- [FlashFry: A fast and flexible tool for large-scale CRISPR target design](https://github.com/mckennalab/FlashFry)
 
-- JVARKIT: Java utilities for Bioinformatics : [Github](https://github.com/lindenb/jvarkit)
+- [JVARKIT: Java utilities for Bioinformatics](https://github.com/lindenb/jvarkit)
 
 - Every tool listed in [environments](environments) folder
 
