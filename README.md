@@ -2,7 +2,7 @@
 
 CutOneStrand is a short pipeline designed to search for genomic positions that can be used for targeting a specific strand with a cas9. It produces as an output a list of SNPs that can be targeted on purpose after patient genotyping. It has been designed in the context of the study : [Functional benefit of CRISPR/Cas9-induced allele deletion for RYR1 dominant mutation](https://doi.org/10.1101/2024.01.24.576997) and is especially usefull in the context of [autosomal dominant disorders](https://www.genome.gov/genetics-glossary/Autosomal-Recessive-Disorder). For the moment it is only compatible with spcas9 targeting NGG pam site. But further developments will lead to other cas and pam to be added.
 
-You can reference the study using DOI : [10.1101/2024.01.24.576997](https://doi.org/10.1101/2024.01.24.576997)
+You can reference the study using DOI : https://doi.org/10.1016/j.omtn.2024.102259
 
 # 2 Installation
 
